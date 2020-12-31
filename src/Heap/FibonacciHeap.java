@@ -50,9 +50,11 @@ public class FibonacciHeap
     public HeapNode insert(int key)
     {    
     	HeapNode node = new HeapNode(key);
+
     	
     	return this.insertNode(node);
  
+
     }
 
    /**
@@ -66,10 +68,10 @@ public class FibonacciHeap
      	HeapNode child = this.min.child;
      	HeapNode minPrev = this.min.getPrev();
      	
-     	this.min.delete();
+     	this.min.deleteFromTree();
      	
      	if (child != null) {
-     		minPrev.setNext(child);
+     		minPrev.insertAfter(child);
      		child.setAllSiblingsParent(null);
      	}
      	if(this.min == this.first) {
@@ -95,6 +97,7 @@ public class FibonacciHeap
     	while(node != null) {
     		current = node;
     		node = node.getNext();
+    		current.isolateNode();
     		while(buckets[current.rank] != null) {
     			current = this.linkTwoTrees(current, buckets[current.rank]);
     			buckets[current.rank - 1] = null;
@@ -112,12 +115,13 @@ public class FibonacciHeap
     		if(buckets[i] != null) {
     			if(newFirst == null) {
     				newFirst = buckets[i];
-    				newFirst.isolateNode();
+    				newMin = newFirst;
+//    				newFirst.isolateNode();
     			}
     			else {
     				HeapNode current = buckets[i];
-    				current.isolateNode();
-    				newFirst.setPrev(current);
+//    				current.isolateNode();
+    				newFirst.insertBefore(current);
     				if (current.getKey() < newMin.getKey())
     					newMin = current;
     			}
@@ -139,7 +143,7 @@ public class FibonacciHeap
     		son = a;
     	}
     	
-    	root.setChild(son);
+    	root.addChild(son);
     	FibonacciHeap.linkCounter++;
     	return root;
     }
@@ -416,7 +420,7 @@ public class FibonacciHeap
 	  	// newPrev!=null
 	  	public void insertBefore(HeapNode newPrev) {
 	  		HeapNode p = newPrev.prev;
-	  		p.insertAfter(newPrev);
+	  		p.insertAfter(this);
 	  	}
 	  	
 	  	// c has no siblings
@@ -428,11 +432,6 @@ public class FibonacciHeap
 
 	  		c.setParent(this);
 	  		this.rank++; //Assuming c is a single node.
-	  	}
-
-	  	public HeapNode delete() {
-	  		
-	  		return this.child;
 	  	}
 	  	
 	  	public void setAllSiblingsParent(HeapNode newParent) {

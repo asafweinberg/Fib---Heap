@@ -1,10 +1,29 @@
 package Tests;
 
+import Heap.FibonacciHeap;
+
 public class Tests {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+		FibonacciHeap h = new FibonacciHeap();
+		insertKeys(h, 0, 8);
+		h.deleteMin();
+		insertKeys(h, 40, 44);
+		h.deleteMin();
+		
+		int j=0;
+		j++;
+		System.out.print("done");
 
 	}
 
+	public static void insertKeys(FibonacciHeap h, int from, int to) {
+		for(int i=from; i< to; i++) {
+			h.insert(i);
+		}
+	}
+	
+	public static void testDeleteMin() {
+		
+	}
 }
