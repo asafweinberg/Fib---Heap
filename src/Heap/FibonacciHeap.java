@@ -227,7 +227,16 @@ public class FibonacciHeap
     */
     public void decreaseKey(HeapNode x, int delta)
     {    
-    	return; // should be replaced by student code
+    	int newKey=x.getKey()-delta;
+    	x.setKey(newKey);
+    	int parentKey= x.getParent().getKey();
+    	if (newKey>parentKey) {
+    		return;
+    	}
+    	
+    	x=x.deleteFromTree();
+    	
+    	
     }
 
    /**
@@ -375,6 +384,7 @@ public class FibonacciHeap
 	  		c.setParent(this);
 	  		this.rank++; //Assuming c is a single node.
 	    }
+
 	  	
 	  	public HeapNode delete() {
 	  		
@@ -393,6 +403,15 @@ public class FibonacciHeap
 	  	public void isolateNode() {
 	  		this.next = this;
 	  		this.prev = this;
+	  	}
+
+	  	public HeapNode deleteFromTree() {
+	  		this.getPrev().setNext(this.getNext());
+	  		this.getNext().setPrev(this.getPrev());
+	  		if (this.getParent().getChild()==this) { //the node is first
+	  			this.getParent().setChild(this.getNext());
+	  		}
+	  		return this;
 	  	}
 
     }
