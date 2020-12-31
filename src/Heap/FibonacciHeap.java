@@ -55,7 +55,7 @@ public class FibonacciHeap
     		this.min = node;
     	}
     	else {
-        	this.first.setPrev(node);
+        	this.first.insertBefore(node);
         	if(this.min.getKey() > key) {
         		this.min = node;
         	}
@@ -76,10 +76,10 @@ public class FibonacciHeap
      	HeapNode child = this.min.child;
      	HeapNode minPrev = this.min.getPrev();
      	
-     	this.min.delete();
+     	this.min.deleteFromTree();
      	
      	if (child != null) {
-     		minPrev.setNext(child);
+     		minPrev.insertAfter(child);
      		child.setAllSiblingsParent(null);
      	}
      	if(this.min == this.first) {
@@ -127,7 +127,7 @@ public class FibonacciHeap
     			else {
     				HeapNode current = buckets[i];
     				current.isolateNode();
-    				newFirst.setPrev(current);
+    				newFirst.insertBefore(current);
     				if (current.getKey() < newMin.getKey())
     					newMin = current;
     			}
@@ -149,7 +149,7 @@ public class FibonacciHeap
     		son = a;
     	}
     	
-    	root.setChild(son);
+    	root.addChild(son);
     	FibonacciHeap.linkCounter++;
     	return root;
     }
@@ -378,7 +378,7 @@ public class FibonacciHeap
 	  	// newPrev!=null
 	  	public void insertBefore(HeapNode newPrev) {
 	  		HeapNode p = newPrev.prev;
-	  		p.insertAfter(newPrev);
+	  		p.insertAfter(this);
 	  	}
 	  	
 	  	// c has no siblings
@@ -390,11 +390,6 @@ public class FibonacciHeap
 
 	  		c.setParent(this);
 	  		this.rank++; //Assuming c is a single node.
-	  	}
-
-	  	public HeapNode delete() {
-	  		
-	  		return this.child;
 	  	}
 	  	
 	  	public void setAllSiblingsParent(HeapNode newParent) {
