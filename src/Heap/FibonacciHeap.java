@@ -51,7 +51,7 @@ public class FibonacciHeap
     {    
     	HeapNode node = new HeapNode(key);
     	if(this.isEmpty()) {
-    		this.first = node;
+    		
     		this.min = node;
     	}
     	else {
@@ -60,7 +60,7 @@ public class FibonacciHeap
         		this.min = node;
         	}
     	}
-    	
+    	this.first = node;
     	this.size++;
     	return node;
     }
