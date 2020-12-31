@@ -238,7 +238,8 @@ public class FibonacciHeap
     		this.min = node;
     	}
     	else {
-        	this.first.setPrev(node);
+        	this.first.insertBefore(node); //to check
+        	
         	if(this.min.getKey() > node.getKey()) {
         		this.min = node;
         	}
@@ -250,8 +251,9 @@ public class FibonacciHeap
     
     private void cascadingCut(HeapNode x,HeapNode xParent){
     	x = cut(x,xParent);
+    	this.insertNode(x);
     	
-    	if (xParent.getParent()!=null) {
+    	if (xParent.getParent()!=null) { //if the parent is not a root
     		if (xParent.getMark()==false) {
     			xParent.setMark(true);
     		}
@@ -264,9 +266,10 @@ public class FibonacciHeap
     private HeapNode cut(HeapNode x, HeapNode xParent) {
     	x.setParent(null);
     	x.setMark(false);
-    	xParent.setRank(xParent.getRank()-1);
+    	
     	if (x.getNext()==x) { // x is only child
     		xParent.setChild(null);
+    		xParent.setRank(xParent.getRank()-1);
     	}
     	else {
     		x=x.deleteFromTree();
