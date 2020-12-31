@@ -105,6 +105,7 @@ public class FibonacciHeap
     	while(node != null) {
     		current = node;
     		node = node.getNext();
+    		current.isolateNode();
     		while(buckets[current.rank] != null) {
     			current = this.linkTwoTrees(current, buckets[current.rank]);
     			buckets[current.rank - 1] = null;
@@ -122,11 +123,12 @@ public class FibonacciHeap
     		if(buckets[i] != null) {
     			if(newFirst == null) {
     				newFirst = buckets[i];
-    				newFirst.isolateNode();
+    				newMin = newFirst;
+//    				newFirst.isolateNode();
     			}
     			else {
     				HeapNode current = buckets[i];
-    				current.isolateNode();
+//    				current.isolateNode();
     				newFirst.insertBefore(current);
     				if (current.getKey() < newMin.getKey())
     					newMin = current;
