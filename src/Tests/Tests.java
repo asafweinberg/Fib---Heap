@@ -8,6 +8,7 @@ public class Tests {
 		FibonacciHeap h = new FibonacciHeap();
 		insertKeys(h, 0, 8);
 		h.deleteMin();
+		printHeap.printHeapFib(h);
 		insertKeys(h, 40, 44);
 		h.deleteMin();
 		
