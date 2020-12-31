@@ -342,26 +342,14 @@ public class FibonacciHeap
 		    return this.next;
 	    }
 	  	public void setNext(HeapNode newNext) {
-	  		if(newNext == null) {
-	  			this.next = null;
-	  		}
-	  		HeapNode newListLast = newNext.prev;
-	  		newListLast.next = this.next;
-	  		this.next.prev = newListLast;
-	  		
-		    this.next = newNext;
-		    newNext.prev = this;
+	  		this.next = newNext;
 	    }
 	  	
 	  	public HeapNode getPrev() {
 		    return this.prev;
 	    }
 	  	public void setPrev(HeapNode newPrev) {
-	  		if(newPrev == null) {
-	  			this.prev = null;
-	  		}
-	  		HeapNode p = newPrev.prev;
-	  		p.setNext(newPrev);
+	  		this.prev = newPrev;
 	    }
 	  	
 	  	public HeapNode getParent() {
@@ -375,26 +363,33 @@ public class FibonacciHeap
 		    return this.child;
 	    }
 	  	public void setChild(HeapNode c) {
-	  		if (this.child != null) {
-		  		this.child.setPrev(c);
-	  		}
-	  		else {
-	  			this.child = c;
-	  		}
-	  		c.setParent(this);
-	  		this.rank++; //Assuming c is a single node.
+	  		this.child = c;
 	    }
 	  	
+	  	// newNext!=null
 	  	public void insertAfter(HeapNode newNext) {
+	  		HeapNode newListLast = newNext.prev;
+	  		newListLast.next = this.next;
+	  		this.next.prev = newListLast;
 	  		
+		    this.next = newNext;
+		    newNext.prev = this;
+	  	}
+	  	// newPrev!=null
+	  	public void insertBefore(HeapNode newPrev) {
+	  		HeapNode p = newPrev.prev;
+	  		p.insertAfter(newPrev);
 	  	}
 	  	
-	  	public void insertBefore(HeapNode newNext) {
-	  		
-	  	}
-	  	
+	  	// c has no siblings
 	  	public void addChild(HeapNode c) {
-	  		
+	  		if (this.child != null) {
+		  		this.child.insertBefore(c);
+	  		}
+	  		this.child = c;
+
+	  		c.setParent(this);
+	  		this.rank++; //Assuming c is a single node.
 	  	}
 
 	  	public HeapNode delete() {
@@ -419,8 +414,9 @@ public class FibonacciHeap
 	  	public HeapNode deleteFromTree() {
 	  		this.getPrev().setNext(this.getNext());
 	  		this.getNext().setPrev(this.getPrev());
-	  		if (this.getParent().getChild()==this) { //the node is first
+	  		if (this.getParent() != null && this.getParent().getChild()==this) { //the node is first
 	  			this.getParent().setChild(this.getNext());
+	  			this.getParent().rank--;
 	  		}
 	  		return this;
 	  	}
