@@ -384,8 +384,19 @@ public class FibonacciHeap
 	  		c.setParent(this);
 	  		this.rank++; //Assuming c is a single node.
 	    }
-
 	  	
+	  	public void insertAfter(HeapNode newNext) {
+	  		
+	  	}
+	  	
+	  	public void insertBefore(HeapNode newNext) {
+	  		
+	  	}
+	  	
+	  	public void addChild(HeapNode c) {
+	  		
+	  	}
+
 	  	public HeapNode delete() {
 	  		
 	  		return this.child;
