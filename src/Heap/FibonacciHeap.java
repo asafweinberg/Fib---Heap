@@ -229,12 +229,19 @@ public class FibonacciHeap
     {    
     	int newKey=x.getKey()-delta;
     	x.setKey(newKey);
+    	HeapNode xParent= x.getParent();
+    	if (xParent==null) { //root can be decreased
+    		return;
+    	}
     	int parentKey= x.getParent().getKey();
-    	if (newKey>parentKey) {
+    	
+    	if (newKey>parentKey) { //the new Key is still greater
     		return;
     	}
     	
-    	x=x.deleteFromTree();
+    	x=x.deleteFromTree(); //x next and prev and parent are still what they were before
+    	xParent.setMark(xParent.getMark()-1);
+    	
     	
     	
     }
