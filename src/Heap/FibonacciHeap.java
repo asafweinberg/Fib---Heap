@@ -50,19 +50,9 @@ public class FibonacciHeap
     public HeapNode insert(int key)
     {    
     	HeapNode node = new HeapNode(key);
-    	if(this.isEmpty()) {
-    		
-    		this.min = node;
-    	}
-    	else {
-        	this.first.setPrev(node);
-        	if(this.min.getKey() > key) {
-        		this.min = node;
-        	}
-    	}
-    	this.first = node;
-    	this.size++;
-    	return node;
+    	
+    	return this.insertNode(node);
+ 
     }
 
    /**
@@ -239,11 +229,49 @@ public class FibonacciHeap
     		return;
     	}
     	
-    	x=x.deleteFromTree(); //x next and prev and parent are still what they were before
-    	xParent.setMark(xParent.getMark()-1);
+    	this.cascadingCut(x,xParent); 
+    	
+    }
+    private HeapNode insertNode(HeapNode node) {
+       	
+    	if(this.isEmpty()) {
+    		this.min = node;
+    	}
+    	else {
+        	this.first.setPrev(node);
+        	if(this.min.getKey() > node.getKey()) {
+        		this.min = node;
+        	}
+    	}
+    	this.first = node;
+    	this.size++;
+    	return node;
+    }
+    
+    private void cascadingCut(HeapNode x,HeapNode xParent){
+    	x = cut(x,xParent);
+    	
+    	if (xParent.getParent()!=null) {
+    		if (xParent.getMark()==false) {
+    			xParent.setMark(true);
+    		}
+    		else
+    			cascadingCut(xParent,xParent.getParent());
+    	}
     	
     	
-    	
+    }
+    private HeapNode cut(HeapNode x, HeapNode xParent) {
+    	x.setParent(null);
+    	x.setMark(false);
+    	xParent.setRank(xParent.getRank()-1);
+    	if (x.getNext()==x) { // x is only child
+    		xParent.setChild(null);
+    	}
+    	else {
+    		x=x.deleteFromTree();
+    	}
+    	return x;
     }
 
    /**
