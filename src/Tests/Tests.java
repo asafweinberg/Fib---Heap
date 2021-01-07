@@ -8,12 +8,15 @@ public class Tests {
 		FibonacciHeap h = new FibonacciHeap();
 		insertKeys(h, 0, 8);
 		h.deleteMin();
+		
 		insertKeys(h, 40, 44);
 		h.deleteMin();
+		printHeap.printHeapFib(h);
+		
 		
 		int j=0;
 		j++;
-		System.out.print("done");
+		System.out.print("done - size = " + h.size());
 
 	}
 
