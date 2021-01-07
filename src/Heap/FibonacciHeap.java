@@ -197,8 +197,27 @@ public class FibonacciHeap
     */
     public int[] countersRep()
     {
-	int[] arr = new int[42];
-        return arr; //	 to be replaced by student code
+    	int h=(int)(Math.log(this.size) / Math.log(2));
+    	int[] arr = new int[h];
+    	HeapNode node=this.first;
+    	int rank;
+    	do {
+    		rank=node.getRank();
+    		arr[rank]++;
+    		node=node.getNext();
+    	}while(node!=this.first);
+    	
+    	int lastFull=h-1;
+    	while(lastFull>=0 && arr[lastFull]==0) {
+    		lastFull--;
+    	}
+    	int[] arrRet = new int[lastFull+1];
+    	
+    	for(int i=0 ; i<=arrRet.length ;i++) {
+    		arrRet[i]=arr[i];
+    	}
+    	
+        return arrRet; 
     }
 	
    /**
