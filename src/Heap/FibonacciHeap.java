@@ -50,13 +50,15 @@ public class FibonacciHeap
     public HeapNode insert(int key)
     {    
     	HeapNode node = new HeapNode(key);
-
-    	
-    	return this.insertNode(node);
- 
-
+    	return this.insertNode(node,true);
     }
-
+    
+    
+    public HeapNode insert(int key, HeapNode info)
+    {    
+    	HeapNode node = new HeapNode(key,info);
+    	return this.insertNode(node,true);
+    }
    /**
     * public void deleteMin()
     *
@@ -243,7 +245,10 @@ public class FibonacciHeap
     	int newKey=x.getKey()-delta;
     	x.setKey(newKey);
     	HeapNode xParent= x.getParent();
-    	if (xParent==null) { //root can be decreased
+    	if (xParent==null) { //x is a root and a root can be decreased
+    		if(newKey<this.min.getKey()) {
+    			this.min=x;
+    		}
     		return;
     	}
     	int parentKey= x.getParent().getKey();
@@ -252,10 +257,14 @@ public class FibonacciHeap
     		return;
     	}
     	
+    	if(newKey<this.min.getKey()) {
+			this.min=x;
+		}
+    	
     	this.cascadingCut(x,xParent); 
     	
     }
-    private HeapNode insertNode(HeapNode node) {
+    private HeapNode insertNode(HeapNode node, boolean isNew) {
        	
     	if(this.isEmpty()) {
     		this.min = node;
@@ -268,17 +277,21 @@ public class FibonacciHeap
         	}
     	}
     	this.first = node;
-    	this.size++;
+    	if(isNew) {
+    		this.size++;
+    	}
     	return node;
     }
     
     private void cascadingCut(HeapNode x,HeapNode xParent){
     	x = cut(x,xParent);
-    	this.insertNode(x);
+    	x.isolateNode();
+    	this.insertNode(x,false);
     	
     	if (xParent.getParent()!=null) { //if the parent is not a root
-    		if (xParent.getMark()==false) {
+    		if (xParent.getMark()==false) { //if the parent is not marked already
     			xParent.setMark(true);
+    			this.marked++;
     		}
     		else
     			cascadingCut(xParent,xParent.getParent());
@@ -287,8 +300,13 @@ public class FibonacciHeap
     	
     }
     private HeapNode cut(HeapNode x, HeapNode xParent) {
-    	x.setParent(null);
-    	x.setMark(false);
+    	this.cutCounter++;
+    	
+    	if (x.getMark()==true) {
+    		this.marked--;
+    		x.setMark(false);
+    	}
+    	
     	
     	if (x.getNext()==x) { // x is only child
     		xParent.setChild(null);
@@ -297,6 +315,7 @@ public class FibonacciHeap
     	else {
     		x=x.deleteFromTree();
     	}
+    	x.setParent(null);
     	return x;
     }
 
@@ -345,8 +364,25 @@ public class FibonacciHeap
     */
     public static int[] kMin(FibonacciHeap H, int k)
     {    
-        int[] arr = new int[42];
-        return arr; // should be replaced by student code
+        int[] arr = new int[k];
+        FibonacciHeap tempHeap = new FibonacciHeap();
+        HeapNode minInserted = H.first;
+        
+        for (int i=0 ; i< k; i++) {
+        	arr[i]=minInserted.getKey();  //insert the minimum from tree
+        	HeapNode childIter =minInserted.getChild();
+        	if(childIter!=null) {
+	        	do{ 
+	 //       		HeapNode child= new HeapNode(); //insert to temp tree the children of the minimum. //key,pointer in original tree
+	        		tempHeap.insert(childIter.getKey(),childIter);
+	        		childIter=childIter.getNext();
+	        	}	while(childIter!=minInserted.getChild());
+        	}	
+        	minInserted=tempHeap.min; //key, pointer to node
+        	tempHeap.deleteMin();
+        	minInserted=minInserted.getInfo();
+        }
+        return arr;
     }
     
    /**
@@ -367,6 +403,8 @@ public class FibonacciHeap
 		private HeapNode child;
 		private HeapNode parent;
 		
+		private HeapNode info;
+		
 	
 	  	public HeapNode(int key) {
 		    this.key = key;
@@ -377,7 +415,16 @@ public class FibonacciHeap
 		    this.child = null;
 		    this.parent = null;
 	      }
-	
+	  	
+	  	public HeapNode(int key, HeapNode info) {
+		    this(key);
+		    this.info=info;
+	      }
+	  	
+	  	public HeapNode getInfo() {
+		    return this.info;
+	    }
+	  	
 	  	public int getKey() {
 		    return this.key;
 	    }

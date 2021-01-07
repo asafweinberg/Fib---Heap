@@ -31,7 +31,7 @@ public class printHeap {
             list[i] = "";
         }
         Integer level = 0;
-        printHeapFib(heap.findMin(), list, level);
+        printHeapFib(heap.getFirst(), list, level);
         for (int i = 0; i < heap.size(); i++) {
             if (list[i]!="")
                 System.out.println(list[i]);
