@@ -14,6 +14,7 @@ public class FibonacciHeap
 	private HeapNode min;
 	private int size;
 	private int marked;
+	private int treesNumber;
 
 	public FibonacciHeap() {
 		this.size = 0;
@@ -24,6 +25,14 @@ public class FibonacciHeap
 	
 	public HeapNode getFirst() {
 		return this.first;
+	}
+	
+	public int getMarkedCount() {
+		return this.marked;
+	}
+	
+	public int getTreesNumber() {
+		return this.treesNumber;
 	}
 	
    /**
@@ -70,28 +79,44 @@ public class FibonacciHeap
      	HeapNode child = this.min.child;
      	HeapNode minPrev = this.min.getPrev();
      	
-     	this.min.deleteFromTree();
-     	
-     	if (child != null) {
-     		minPrev.insertAfter(child);
-     		child.setAllSiblingsParent(null);
+     	if (this.min != null && this.min != minPrev)
+     	{
+     		this.min.deleteFromTree();
+     		if (child != null) {
+         		minPrev.insertAfter(child);
+         		child.setAllSiblingsParent(null);
+         	}
+     		if(this.min == this.first) {
+     			if( child != null) {
+     				this.first = child;
+     			} else {
+     				this.first = minPrev.getNext();
+     			}
+         	}
      	}
-     	if(this.min == this.first) {
+     	else {
      		this.first = child;
+     		if (child != null) {
+         		child.setAllSiblingsParent(null);
+         	}
      	}
+     	
      	this.preformSuccessiveLinking();
      	
      	this.size--;
     }
     
     private void preformSuccessiveLinking() {
-    	HeapNode[] buckets = this.toBuckets();
-    	this.fromBuckets(buckets);
+        HeapNode[] buckets = this.toBuckets();
+        this.fromBuckets(buckets);
     }
     
     private HeapNode[] toBuckets() {
     	int bNumber = (int)(Math.floor(Math.log(this.size)/Math.log(2)) + 1);
     	HeapNode[] buckets = new HeapNode[bNumber];
+    	if(this.first == null) {
+    		return buckets;
+    	}
     	this.first.getPrev().setNext(null);
     	HeapNode node = this.first;
     	HeapNode current;
@@ -112,6 +137,7 @@ public class FibonacciHeap
     
     private void fromBuckets(HeapNode[] buckets) {
     	HeapNode newFirst = null, newMin = null;
+    	int trees = 0;
     	
     	for (int i = 0; i < buckets.length; i++) {
     		if(buckets[i] != null) {
@@ -127,11 +153,13 @@ public class FibonacciHeap
     				if (current.getKey() < newMin.getKey())
     					newMin = current;
     			}
+    			trees++;
     		}
 		}
     	
     	this.first = newFirst;
     	this.min = newMin;
+    	this.treesNumber = trees;
     }
     
     private HeapNode linkTwoTrees(HeapNode a, HeapNode b) {
@@ -174,10 +202,11 @@ public class FibonacciHeap
     		  this.first = heap2.getFirst();
     	  }
     	  else {
-    		  this.first.setPrev(heap2.getFirst());
+    		  this.first.insertBefore(heap2.getFirst());
     	  }
     	  this.size += heap2.size;
     	  this.marked += heap2.marked;
+    	  this.treesNumber += heap2.treesNumber;
     }
 
    /**
@@ -280,6 +309,7 @@ public class FibonacciHeap
     	if(isNew) {
     		this.size++;
     	}
+    	this.treesNumber++;
     	return node;
     }
     
@@ -300,11 +330,11 @@ public class FibonacciHeap
     	
     }
     private HeapNode cut(HeapNode x, HeapNode xParent) {
-    	this.cutCounter++;
+    	FibonacciHeap.cutCounter++;
     	
-    	if (x.getMark()==true) {
+    	if (x.getMark()==true) { //TODO CHECK WITH CARINA - IS IT RIGHT?
     		this.marked--;
-    		x.setMark(false);
+    		x.setMark(false); //TODO CHECK WITH CARINA - IS IT RIGHT?
     	}
     	
     	
@@ -328,7 +358,7 @@ public class FibonacciHeap
     */
     public int potential() 
     {    
-    	return this.size + 2 * this.marked;
+    	return this.treesNumber + 2 * this.marked;
     }
 
    /**
@@ -517,8 +547,10 @@ public class FibonacciHeap
 	  	public HeapNode deleteFromTree() {
 	  		this.getPrev().setNext(this.getNext());
 	  		this.getNext().setPrev(this.getPrev());
-	  		if (this.getParent() != null && this.getParent().getChild()==this) { //the node is first
-	  			this.getParent().setChild(this.getNext());
+	  		if (this.getParent() != null) { 
+	  			if(this.getParent().getChild() == this) { //the node is first
+	  				this.getParent().setChild(this.getNext());
+	  			}
 	  			this.getParent().rank--;
 	  		}
 	  		return this;
