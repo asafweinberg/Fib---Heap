@@ -384,6 +384,11 @@ public class FibonacciHeap
     {    
     	return FibonacciHeap.cutCounter;
     }
+    
+    public static void resetStaticVars() {
+    	FibonacciHeap.cutCounter = 0;
+    	FibonacciHeap.linkCounter = 0;
+    }
 
      /**
     * public static int[] kMin(FibonacciHeap H, int k) 
