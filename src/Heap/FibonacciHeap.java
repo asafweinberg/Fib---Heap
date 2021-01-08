@@ -7,8 +7,8 @@ package Heap;
  */
 public class FibonacciHeap
 {
-	public static int cutCounter = 0;
-	public static int linkCounter = 0;
+	public static int cutCounter = 0; //static field - counts the number of cuts performed in this program
+	public static int linkCounter = 0; //static field - counts the number of links performed in this program
 	
 	private HeapNode first;
 	private HeapNode min;
@@ -16,21 +16,38 @@ public class FibonacciHeap
 	private int marked;
 	private int treesNumber;
 
+	/**
+    * FibonacciHeap():
+    * empty constructor - sets properties to default values
+    */
 	public FibonacciHeap() {
 		this.size = 0;
 		this.marked = 0;
+		this.treesNumber = 0;
 		this.min = null;
 		this.first = null;
 	}
 	
+	/**
+	    * HeapNode getFirst():
+	    * returns the first node of the heap
+	    */
 	public HeapNode getFirst() {
 		return this.first;
 	}
 	
+	/**
+	    * int getMarkedCount():
+	    * returns the number of marked nodes in the heap
+	    */
 	public int getMarkedCount() {
 		return this.marked;
 	}
 	
+	/**
+	    * int getTreesNumber():
+	    * returns the number of trees in the heap
+	    */
 	public int getTreesNumber() {
 		return this.treesNumber;
 	}
@@ -62,13 +79,18 @@ public class FibonacciHeap
     	return this.insertNode(node,true);
     }
     
-    
-    public HeapNode insert(int key, HeapNode info)
+	/**
+	    * HeapNode insert(int key, HeapNode info):
+	    * private method - inserts a new node to a given heap.
+	    * saves in the node a pointer to a different HeapNode.
+	    */
+    private HeapNode insert(int key, HeapNode info)
     {    
     	HeapNode node = new HeapNode(key,info);
     	return this.insertNode(node,true);
     }
-   /**
+   
+    /**
     * public void deleteMin()
     *
     * Delete the node containing the minimum key.
@@ -106,11 +128,23 @@ public class FibonacciHeap
      	this.size--;
     }
     
+    /**
+    * private void preformSuccessiveLinking()
+    *
+    * performing the consolidating algorithm over the current heap.
+    *
+    */
     private void preformSuccessiveLinking() {
         HeapNode[] buckets = this.toBuckets();
         this.fromBuckets(buckets);
     }
     
+    /**
+    * private HeapNode[] toBuckets()
+    *
+    * First part of  the consolidating algorithm.
+    * linking trees with same rank until we get one or less tree with the same rank.
+    */
     private HeapNode[] toBuckets() {
     	int bNumber = (int)(Math.floor(Math.log(this.size)/Math.log(2)) + 1);
     	HeapNode[] buckets = new HeapNode[bNumber];
@@ -135,6 +169,12 @@ public class FibonacciHeap
     	return buckets;
     }
     
+    /**
+     * private void fromBuckets(HeapNode[] buckets)
+     *
+     * Second part of  the consolidating algorithm.
+     * link all the different rank trees and insert into the heap, replacing the old heap.
+     */
     private void fromBuckets(HeapNode[] buckets) {
     	HeapNode newFirst = null, newMin = null;
     	int trees = 0;
@@ -162,6 +202,10 @@ public class FibonacciHeap
     	this.treesNumber = trees;
     }
     
+    /**
+     * private HeapNode linkTwoTrees(HeapNode a, HeapNode b)
+     * getting to nodes, linking their trees into a legal heap-tree.
+     */
     private HeapNode linkTwoTrees(HeapNode a, HeapNode b) {
     	HeapNode root, son;
     	if(a.getKey() < b.getKey()) {
@@ -293,6 +337,13 @@ public class FibonacciHeap
     	this.cascadingCut(x,xParent); 
     	
     }
+    
+    /**
+     * private HeapNode insertNode(HeapNode node, boolean isNew)
+     * inserting a node to the tree.
+     * the method handles all the heap properties.
+     * isNew - if true increasing heap size
+     */
     private HeapNode insertNode(HeapNode node, boolean isNew) {
        	
     	if(this.isEmpty()) {
@@ -385,6 +436,10 @@ public class FibonacciHeap
     	return FibonacciHeap.cutCounter;
     }
     
+    /**
+     * public static void resetStaticVars()
+     * reseting the static count fields - used only for the measurements section in the assignment
+     */
     public static void resetStaticVars() {
     	FibonacciHeap.cutCounter = 0;
     	FibonacciHeap.linkCounter = 0;
@@ -430,17 +485,21 @@ public class FibonacciHeap
     */
     public class HeapNode{
 
-		public int key;
-		private int rank;
-		private boolean mark;
-		private HeapNode next;
-		private HeapNode prev;
-		private HeapNode child;
-		private HeapNode parent;
+		public int key; // the node's key
+		private int rank; // the number of children of the node
+		private boolean mark; // contains the mark'd state of the heap
+		private HeapNode next; // a pointer to the next node in the siblings list
+		private HeapNode prev; // a pointer to the previous node in the siblings list
+		private HeapNode child; // a pointer to the first child in the children list
+		private HeapNode parent; // a pointer to the node's parent
 		
-		private HeapNode info;
+		private HeapNode info; // contains a pointer to an original node from a different heap. used in kMin algorithm
 		
-	
+		/**
+	     * public HeapNode(int key)
+	     * creates a single node with the given key.
+	     * the single node is a nodes double-linked-list with one node
+	     */
 	  	public HeapNode(int key) {
 		    this.key = key;
 		    this.rank = 0;
@@ -451,65 +510,134 @@ public class FibonacciHeap
 		    this.parent = null;
 	      }
 	  	
+	  	/**
+	     * public HeapNode(int key)
+	     * creates a single node with the given key and info.
+	     * the single node is a nodes double-linked-list with one node
+	     */
 	  	public HeapNode(int key, HeapNode info) {
 		    this(key);
 		    this.info=info;
 	      }
 	  	
+	  	/**
+	     * public HeapNode getInfo()
+	     * returns the node's info field info.
+	     */
 	  	public HeapNode getInfo() {
 		    return this.info;
 	    }
 	  	
+	  	/**
+	     * public int getKey()
+	     * returns the node's key.
+	     */
 	  	public int getKey() {
 		    return this.key;
 	    }
+	  	/**
+	     * public void setKey(int key)
+	     * Sets the key of the node.
+	     */
 	  	public void setKey(int key) {
 		    this.key = key;
 	    }
 	  	
+	  	/**
+	     * public int getRank()
+	     * returns the node's rank - the number of children.
+	     */
 	  	public int getRank() {
 		    return this.rank;
 	    }
+	  	/**
+	     * public void setRank(int rank)
+	     * Sets the rank of the node - the number of children he has.
+	     */	  	
 	  	public void setRank(int rank) {
 		    this.rank = rank;
 	    }
 	  	
+	  	/**
+	     * public boolean getMark()
+	     * returns if the node is marked.
+	     */
 	  	public boolean getMark() {
 		    return this.mark;
 	    }
+	  	/**
+	     * public void setMark(boolean mark)
+	     * Sets the mark flag of the node.
+	     */
 	  	public void setMark(boolean mark) {
 		    this.mark = mark;
 	    }
 	  	
+	  	/**
+	     * public HeapNode getNext()
+	     * returns the next node in the siblings list.
+	     */
 	  	public HeapNode getNext() {
 		    return this.next;
 	    }
+	  	/**
+	     * public void setNext(HeapNode newNext)
+	     * Sets the next pointer of the node.
+	     */
 	  	public void setNext(HeapNode newNext) {
 	  		this.next = newNext;
 	    }
 	  	
+	  	/**
+	     * public HeapNode getPrev()
+	     * returns the previous node in the siblings list.
+	     */
 	  	public HeapNode getPrev() {
 		    return this.prev;
 	    }
+	  	/**
+	     * public void setPrev(HeapNode newPrev)
+	     * Sets the previous pointer of the node.
+	     */
 	  	public void setPrev(HeapNode newPrev) {
 	  		this.prev = newPrev;
 	    }
 	  	
+	  	/**
+	     * public HeapNode getParent()
+	     * returns the node's parent in the tree.
+	     */
 	  	public HeapNode getParent() {
 		    return this.parent;
 	    }
+	  	/**
+	     * public void setParent(HeapNode p)
+	     * Sets the node's parent.
+	     */
 	  	public void setParent(HeapNode p) {
 	  		this.parent = p;
 	    }
 	  	
+	  	/**
+	     * public HeapNode getChild()
+	     * returns the first node in the children list.
+	     */
 	  	public HeapNode getChild() {
 		    return this.child;
 	    }
+	  	/**
+	     * public void setChild(HeapNode c)
+	     * Sets the node's children list pointer.
+	     */
 	  	public void setChild(HeapNode c) {
 	  		this.child = c;
 	    }
 	  	
-	  	// newNext!=null
+	  	/**
+	     * public void insertAfter(HeapNode newNext)
+	     * Insert a node to the list after this node.
+	     * @pre newNext!=null
+	     */
 	  	public void insertAfter(HeapNode newNext) {
 	  		HeapNode newListLast = newNext.prev;
 	  		newListLast.next = this.next;
@@ -518,13 +646,22 @@ public class FibonacciHeap
 		    this.next = newNext;
 		    newNext.prev = this;
 	  	}
-	  	// newPrev!=null
+
+	  	/**
+	     * public void insertBefore(HeapNode newPrev)
+	     * Insert a node to the list before this node.
+	     * @pre newPrev!=null
+	     */
 	  	public void insertBefore(HeapNode newPrev) {
 	  		HeapNode p = newPrev.prev;
 	  		p.insertAfter(this);
 	  	}
 	  	
-	  	// c has no siblings
+	  	/**
+	     * public void addChild(HeapNode c)
+	     * Insert a node to this node children list. the new child will be located at the beginning of the list
+	     * @pre c has no siblings - c is a single-node list
+	     */
 	  	public void addChild(HeapNode c) {
 	  		if (this.child != null) {
 		  		this.child.insertBefore(c);
@@ -535,6 +672,10 @@ public class FibonacciHeap
 	  		this.rank++; //Assuming c is a single node.
 	  	}
 	  	
+	  	/**
+	     * public void setAllSiblingsParent(HeapNode newParent)
+	     * change the parent of every node in the list
+	     */
 	  	public void setAllSiblingsParent(HeapNode newParent) {
 	  		HeapNode first = this;
 	  		while (first.getNext() != this) {
@@ -544,11 +685,21 @@ public class FibonacciHeap
 	  		this.setParent(newParent);
 	  	}
 	  	
+	  	/**
+	     * public void isolateNode()
+	     * make turn this node into a single-node list
+	     */
 	  	public void isolateNode() {
 	  		this.next = this;
 	  		this.prev = this;
 	  	}
 
+	  	/**
+	     * HeapNode deleteFromTree()
+	     * removes a node from the list. 
+	     * disconnect the node from his parent.
+	     * decreases the parent's rank.
+	     */
 	  	public HeapNode deleteFromTree() {
 	  		this.getPrev().setNext(this.getNext());
 	  		this.getNext().setPrev(this.getPrev());

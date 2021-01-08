@@ -7,7 +7,18 @@ public class Measurements {
 
 	public static void main(String[] args) {
 		runSequence1();
-		runSequence2();	
+		runSequence2();
+//		System.out.println("---------------- Measurements Part 1 ---------------------");
+//		sequence1(1024, 10);
+//		sequence1(2048, 11);
+//		sequence1(4096, 12);
+//		System.out.println();
+//		System.out.println("---------------- Measurements Part 2 ---------------------");
+//		sequence2(3000);
+//		sequence2(2000);
+//		sequence2(1000);
+//
+//		System.out.println();
 	}
 	
 	public static void runSequence1() {
@@ -20,9 +31,10 @@ public class Measurements {
 	
 	public static void runSequence2() {
 		System.out.println("---------------- Measurements Part 2 ---------------------");
-		sequence2(1000);
-		sequence2(2000);
 		sequence2(3000);
+		sequence2(2000);
+		sequence2(1000);
+
 		System.out.println();
 	}
 	
