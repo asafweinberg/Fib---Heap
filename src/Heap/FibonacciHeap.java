@@ -1,4 +1,4 @@
-package Heap;
+//package Heap;
 
 /**
  * FibonacciHeap
@@ -272,7 +272,7 @@ public class FibonacciHeap
     */
     public int[] countersRep()
     {
-    	int h=(int)(Math.log(this.size) / Math.log(2));
+    	int h=(int)(Math.floor(Math.log(this.size)/Math.log(2)) + 1);
     	int[] arr = new int[h];
     	HeapNode node=this.first;
     	int rank;
@@ -288,7 +288,7 @@ public class FibonacciHeap
     	}
     	int[] arrRet = new int[lastFull+1];
     	
-    	for(int i=0 ; i<=arrRet.length ;i++) {
+    	for(int i=0 ; i<arrRet.length ;i++) {
     		arrRet[i]=arr[i];
     	}
     	
@@ -364,6 +364,12 @@ public class FibonacciHeap
     	return node;
     }
     
+    /**
+     * private void cascadingCut(HeapNode x,HeapNode xParent)
+     * perform a cut on the nodes x from its parent xParent, and goes on to cascading cut if needed.
+     * the method handles all the heap properties.
+     */
+    
     private void cascadingCut(HeapNode x,HeapNode xParent){
     	x = cut(x,xParent);
     	x.isolateNode();
@@ -380,12 +386,18 @@ public class FibonacciHeap
     	
     	
     }
+    
+    /**
+     * private HeapNode cut(HeapNode x, HeapNode xParent)
+     * the method perform a cut on the nodes x from its parent xParent.
+     * the method handles all the heap properties.
+     */
     private HeapNode cut(HeapNode x, HeapNode xParent) {
     	FibonacciHeap.cutCounter++;
     	
-    	if (x.getMark()==true) { //TODO CHECK WITH CARINA - IS IT RIGHT?
+    	if (x.getMark()==true) { 
     		this.marked--;
-    		x.setMark(false); //TODO CHECK WITH CARINA - IS IT RIGHT?
+    		x.setMark(false); 
     	}
     	
     	
